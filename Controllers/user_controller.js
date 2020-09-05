@@ -64,7 +64,7 @@ exports.logoutUser = (req, res) => {
 logout User
 */
 exports.getHighScore = (req, res) => {
-    User.find().then(result=>{
+    User.find({}).then(result=>{
         res.send({
             status:"true",
             result:result,

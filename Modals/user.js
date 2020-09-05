@@ -9,5 +9,6 @@ var User = mongoose.Schema(
     }
 );
 
+let user = module.exports = mongoose.model('users', User);
 
-let user = module.exports = mongoose.model('user', User);
+// db.users.insert( { name:"Shubham", email:"shubham@gmail.com", password:"123456", score:0 } )

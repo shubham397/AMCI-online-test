@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Table} from 'antd';
 
@@ -12,44 +12,33 @@ const columns = [
     key: 'name',
   },
   {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
+    title: 'Score',
+    dataIndex: 'score',
+    key: 'score',
   }
-];
-
-const data = [
-  {
-    name: 'John Brown',
-    age: 32
-  },
-  {
-    name: 'Jim Green',
-    age: 42
-  },
-  {
-    name: 'Joe Black',
-    age: 32
-  },
 ];
 
 const App = () => {
 
+  const [tdata,setTdata] = useState("");
+
   useEffect(()=>{
     axios.get('http://localhost:1234/user/getHighScore')
       .then(function (response) {
-        // handle success
-        console.log(response);
+        const data = response.data.result.map((newData)=>{
+          return {name:newData.name, score:newData.score}
+        })
+        console.log(data);
+        setTdata(data);
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
       })
-  })
+  },[])
 
   return (
     <div>
-        <Table columns={columns} dataSource={data} pagination={false} />
+        <Table columns={columns} dataSource={tdata} pagination={false} />
     </div>
   );
 };

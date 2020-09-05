@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Button} from 'antd';
 import './index.css'
 import 'antd/dist/antd.css';
@@ -9,7 +9,14 @@ const App = () => {
 
   const [page, setPage] = useState("new");
 
+  useEffect(()=>{
+    localStorage.setItem("userName", "");
+    localStorage.setItem("score", 0);
+  },[])
+
   const onNewClick = () => {
+    localStorage.setItem("userName", "");
+    localStorage.setItem("score", 0);
     setPage('new');
   };
 
