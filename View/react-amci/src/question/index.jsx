@@ -109,7 +109,7 @@ const App = () => {
     
     return (
       <div className="site-card-border-less-wrapper">
-        <h1>Question No. -> {questionCount.current}</h1>
+        <h1>Question No. -&gt; {questionCount.current}</h1>
       <Card title={`${question.current[randomQuestion.current].question}`} bordered={false}>
         <Checkbox onChange={onChange} disabled={active} value="0">A. {question.current[randomQuestion.current].options[0]}</Checkbox>
         <br/>
