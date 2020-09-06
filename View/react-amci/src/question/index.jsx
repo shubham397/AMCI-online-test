@@ -22,13 +22,22 @@ const tailLayout = {
 const App = () => {
 
   const [user, setUser] = useState(null);
-  const [randomQuestion, setRandomQuestion] = useState(Math.floor((Math.random() * 100)%10));
+  const [randomQuestion, setRandomQuestion] = useState(0);
+  const lastRandom = useRef(randomQuestion)
+  
+  const timer = useRef(60);
+  const divTimer = useRef();
+  const timerCount = useRef();
+
+  const questionCount = useRef(1);
   const question = useRef("");
+  
   const active = useRef(false);
   const optionChecked = useRef("");
-  const questionCount = useRef(1);
-  const divQuestion = useRef("");
-  const divScore = useRef("");
+
+  const divQuestion = useRef();
+  const divScore = useRef();
+
 
   useEffect(()=>{
     axios.get('http://localhost:1234/question/getQuestion')
@@ -45,6 +54,7 @@ const App = () => {
     setUser(values);
     localStorage.setItem("userName", values.username);
     console.log('Success:', values);
+    changeTimer();
   };
 
   const onFinishFailed = errorInfo => {
@@ -82,6 +92,21 @@ const App = () => {
     </Form>);
   }
 
+  const changeTimer = ()=>{
+    try {
+      divTimer.current.innerText = `Countdown: ${timer.current} Seconds`;
+    } catch (error) {
+      console.log(error);
+    }
+    if(timer.current>0){
+      timer.current = timer.current-1;
+      timerCount.current = setTimeout(changeTimer, 1000);
+    }
+    else{
+      onNewClick("skip");
+    }
+  }
+
   function onChange(e) {
     optionChecked.current = e.target.value;
     let currentPoint = parseInt(localStorage.getItem("score"));
@@ -106,16 +131,32 @@ const App = () => {
     })
   }
 
-  const onNewClick = () => {
+  const onNewClick = (text) => {
+    timer.current = 60;
     if(questionCount.current>14){
       saveScore();
-      divQuestion.current.style.display = "none";
-      divScore.current.style.display = "block";
+      try {
+        divQuestion.current.style.display = "none";
+        divScore.current.style.display = "block";
+      } catch (error) {
+        console.log(error)
+      }
       return;
     }
-    if(active.current){
-      setRandomQuestion(Math.floor((Math.random() * 100)%10));
+    if(active.current || text==="skip"){
+      timer.current = 60;
+      clearTimeout(timerCount.current);
+      changeTimer();
+
       questionCount.current = questionCount.current+1;
+
+      let random = Math.floor((Math.random() * 10));
+      while(lastRandom.current === random){
+        random = Math.floor((Math.random() * 10));
+      }
+      lastRandom.current = random;
+      setRandomQuestion(lastRandom.current);
+      
       active.current = false
     }
     else{
@@ -128,7 +169,8 @@ const App = () => {
     return (
       <div>
         <div ref={divQuestion} className="site-card-border-less-wrapper">
-          <h1>Question No. -&gt; {questionCount.current}</h1>
+          <h3>Question No. -&gt; {questionCount.current}</h3>
+          <div ref={divTimer}>Countdown: {timer.current} Seconds</div>
           <Card title={`${question.current[randomQuestion].question}`} bordered={false}>
             <Radio.Group onChange={onChange}>
               <Radio disabled={active.current} value="0">A. {question.current[randomQuestion].options[0]}</Radio>

@@ -23,7 +23,7 @@ exports.addUser = (req, res) => {
 logout User
 */
 exports.getHighScore = (req, res) => {
-    User.find({}).then(result=>{
+    User.find({}).sort( { score : -1} ).then(result=>{
         res.send({
             status:"true",
             result:result,
