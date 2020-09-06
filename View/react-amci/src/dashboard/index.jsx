@@ -25,14 +25,14 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div style={{width: "300px", margin: "auto", marginTop:"100px"}}>
         <Button onClick={()=>{onNewClick()}}>
           New Game
         </Button>
-        <Button onClick={()=>{onHighClick()}}>
+        <Button style={{marginLeft:"30px"}} onClick={()=>{onHighClick()}}>
           View High Score
         </Button>
-        <div>
+        <div style={{marginTop:"30px", border:"solid blue", padding:"10px"}}>
           {page==="new"?<NewGame />:<HighScore/>}
         </div>
     </div>

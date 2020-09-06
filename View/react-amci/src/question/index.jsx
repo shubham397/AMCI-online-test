@@ -182,6 +182,7 @@ const App = () => {
               <Radio disabled={active.current} value="3">D. {question.current[randomQuestion].options[3]}</Radio>
             </Radio.Group>
               <br/>
+              <br/>
             <Button onClick={()=>{onNewClick()}}>
               Submit
             </Button>
