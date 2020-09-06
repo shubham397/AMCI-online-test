@@ -17,6 +17,7 @@ const App = () => {
   const onNewClick = () => {
     localStorage.setItem("userName", "");
     localStorage.setItem("score", 0);
+    setPage('');
     setPage('new');
   };
 
