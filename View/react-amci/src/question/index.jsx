@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, Input, Button, Card, Checkbox} from 'antd';
+import { Form, Input, Button, Card, Radio} from 'antd';
 import axios from 'axios';
 import './index.css'
 import 'antd/dist/antd.css';
@@ -22,17 +22,17 @@ const tailLayout = {
 const App = () => {
 
   const [user, setUser] = useState(null);
-  const [active, setActive] = useState(false);
+  const [randomQuestion, setRandomQuestion] = useState(Math.floor((Math.random() * 10)));
   const question = useRef("");
+  const active = useRef(false);
   const optionChecked = useRef("");
   const questionCount = useRef(1);
-  const randomQuestion = useRef(1)//Math.floor((Math.random() * 10)));
+  const radioRef = useRef("");
 
   useEffect(()=>{
     axios.get('http://localhost:1234/question/getQuestion')
     .then(function (response) {
       question.current = response.data.result;
-      console.log(question.current);
     })
     .catch(function (error) {
       // handle error
@@ -85,20 +85,41 @@ const App = () => {
     optionChecked.current = e.target.value;
     let currentPoint = parseInt(localStorage.getItem("score"));
     currentPoint++;
-    if(optionChecked.current == question.current[randomQuestion.current].answer){
+    console.log(question.current[randomQuestion].answer);
+    if(optionChecked.current == question.current[randomQuestion].answer){
       localStorage.setItem("score",currentPoint);
     }
-    setActive(true);
+    radioRef.current.state.checked = true;
+    // setActive(true);
+    active.current = true
+  }
+
+  const saveScore = () =>{
+    const user = {
+      name: localStorage.getItem("userName"),
+      score: localStorage.getItem("score"),
+    };
+    axios.post('http://localhost:1234/user/addUser', { user })
+    .then(function (response) {
+      console.log(response.data.status);
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
   }
 
   const onNewClick = () => {
     if(questionCount.current>14){
-      return;
+      saveScore();
+      return ;
     }
-    if(active){
-      randomQuestion.current = 1//Math.floor((Math.random() * 10));
+    if(active.current){
+      // randomQuestion.current = Math.floor((Math.random() * 10));
+      setRandomQuestion(Math.floor((Math.random() * 10)));
       questionCount.current = questionCount.current+1;
-      setActive(false);
+      // setActive(false);
+      active.current = false
     }
     else{
       alert("Select any one")
@@ -110,15 +131,17 @@ const App = () => {
     return (
       <div className="site-card-border-less-wrapper">
         <h1>Question No. -&gt; {questionCount.current}</h1>
-      <Card title={`${question.current[randomQuestion.current].question}`} bordered={false}>
-        <Checkbox onChange={onChange} disabled={active} value="0">A. {question.current[randomQuestion.current].options[0]}</Checkbox>
-        <br/>
-        <Checkbox onChange={onChange} disabled={active} value="1">B. {question.current[randomQuestion.current].options[1]}</Checkbox>
-        <br/>
-        <Checkbox onChange={onChange} disabled={active} value="2">C. {question.current[randomQuestion.current].options[2]}</Checkbox>
-        <br/>
-        <Checkbox onChange={onChange} disabled={active} value="3">D. {question.current[randomQuestion.current].options[3]}</Checkbox>
-        <br/>
+      <Card title={`${question.current[randomQuestion].question}`} bordered={false}>
+        <Radio.Group onChange={onChange}>
+          <Radio ref={radioRef} disabled={active.current} value="0">A. {question.current[randomQuestion].options[0]}</Radio>
+          <br/>
+          <Radio ref={radioRef} disabled={active.current} value="1">B. {question.current[randomQuestion].options[1]}</Radio>
+          <br/>
+          <Radio ref={radioRef} disabled={active.current} value="2">C. {question.current[randomQuestion].options[2]}</Radio>
+          <br/>
+          <Radio ref={radioRef} disabled={active.current} value="3">D. {question.current[randomQuestion].options[3]}</Radio>
+        </Radio.Group>
+          <br/>
         <Button onClick={()=>{onNewClick()}}>
           Submit
         </Button>

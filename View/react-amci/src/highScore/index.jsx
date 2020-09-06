@@ -28,7 +28,6 @@ const App = () => {
         const data = response.data.result.map((newData)=>{
           return {name:newData.name, score:newData.score}
         })
-        console.log(data);
         setTdata(data);
       })
       .catch(function (error) {
