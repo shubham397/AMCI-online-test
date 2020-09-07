@@ -3,17 +3,12 @@ const bodyParser = require('body-parser');
 const express = require("express");
 const mongoose = require('mongoose');
 const cors = require('cors')
-const dotenv = require('dotenv');
-const path = require('path');
 
 var app = express();
 app.use(cors())
 
-dotenv.config({ path: '.env' });
-
-const userName = process.env.USER_NAME;
-const password = process.env.PASSWORD;
-console.log(password)
+const userName = "shubham_task";
+const password = "database_task1";
 mongoose.connect(`mongodb://${userName}:${password}@ds261817.mlab.com:61817/task`, 
     {useNewUrlParser: true },function(err){
     {
