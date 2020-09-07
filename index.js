@@ -2,12 +2,27 @@ const port = 1234;
 const bodyParser = require('body-parser');
 const express = require("express");
 const mongoose = require('mongoose');
-var cors = require('cors')
+const cors = require('cors')
+const dotenv = require('dotenv');
+const path = require('path');
 
 var app = express();
 app.use(cors())
 
-mongoose.connect('mongodb://localhost:27017/task');
+dotenv.config({ path: '.env' });
+
+const userName = process.env.USER_NAME;
+const password = process.env.PASSWORD;
+console.log(password)
+mongoose.connect(`mongodb://${userName}:${password}@ds261817.mlab.com:61817/task`, 
+    {useNewUrlParser: true },function(err){
+    {
+        if(err) {
+            console.log('Some problem with the connection ' +err);
+        } else {
+            console.log('The Mongoose connection is ready');
+        }
+    }})
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
